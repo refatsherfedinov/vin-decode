@@ -1,0 +1,34 @@
+.menu {
+    justify-content: center;
+    align-items: center;
+}
+
+.menuList {
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    gap: 40px;
+}
+
+.menuList li {
+    display: flex;
+}
+
+.navLink {
+    color: dodgerblue;
+    text-decoration: none;
+
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.navLink:hover {
+    color: white;
+}
+
+.navLinkActive {
+    color: white;
+    font-weight: bold;
+}

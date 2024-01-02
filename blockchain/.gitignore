@@ -1,0 +1,22 @@
+node_modules
+
+
+# Hardhat files
+/cache
+/artifacts
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# solidity-coverage files
+/coverage
+/coverage.json

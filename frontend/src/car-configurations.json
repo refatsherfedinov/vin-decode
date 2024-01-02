@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Standard",
+        "description": "Basic trim with essential features and standard equipment."
+    },
+    {
+        "name": "Sport",
+        "description": "Enhanced performance features, sporty design, and agile handling."
+    },
+    {
+        "name": "Luxe",
+        "description": "Luxury amenities, superior comfort, and advanced technology features."
+    },
+    {
+        "name": "Premium",
+        "description": "Top-tier luxury and technology, with the highest level of features."
+    },
+    {
+        "name": "Eco",
+        "description": "Focused on fuel efficiency and eco-friendly technology, such as hybrids or electrics."
+    },
+    {
+        "name": "Adventure",
+        "description": "Off-road capabilities, rugged design, and outdoor-oriented features."
+    },
+    {
+        "name": "Executive",
+        "description": "High-end luxury, focusing on comfort and prestigious amenities."
+    },
+    {
+        "name": "Special Edition",
+        "description": "Limited production runs with unique features or commemorative elements."
+    },
+    {
+        "name": "Performance",
+        "description": "High power output, sport-tuned mechanics, and performance-oriented features."
+    },
+    {
+        "name": "Custom",
+        "description": "Bespoke features and personalized design options for individual preference."
+    }
+]

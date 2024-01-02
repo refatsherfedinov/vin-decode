@@ -1,0 +1,54 @@
+.container {
+    padding: 0 60px;
+}
+
+.containerTop {
+    max-width: 600px;
+    margin: auto;
+}
+
+.carInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    justify-content: center;
+    gap: 16px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: space-between;
+}
+.accidentBoard {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+}
+.accidentsHistory {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+}
+
+.description {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+}
+
+.dragnDrop {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+}

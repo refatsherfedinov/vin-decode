@@ -1,0 +1,89 @@
+a {
+    color: blue;
+}
+
+a:hover {
+    color: darkblue;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.search {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.updateServiceForm {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    gap: 16px;
+}
+
+.addNewCarForm {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    gap: 16px;
+}
+
+.selectors {
+    display: flex;
+    flex-direction: row;
+
+    gap: 16px;
+}
+
+.addNewCarForm .selectors .leftCol {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    gap: 16px;
+}
+.addNewCarForm .selectors .rightCol {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    gap: 16px;
+}
+
+.services {
+    width: 500px;
+}
+
+.service {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 10px;
+}
+
+.serviceWorksList {
+    display: flex;
+    gap: 4px;
+}
+
+.updateServiceForm {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.serviceHistory {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}

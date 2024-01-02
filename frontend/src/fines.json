@@ -1,0 +1,122 @@
+[
+    {
+        "law": "Bicycle Lane Violation",
+        "fineAmount": 0.0057
+    },
+    {
+        "law": "Illegal Lane Change",
+        "fineAmount": 0.0205
+    },
+    {
+        "law": "Tailgating",
+        "fineAmount": 0.0243
+    },
+    {
+        "law": "No Seatbelt",
+        "fineAmount": 0.0094
+    },
+    {
+        "law": "Broken Tail Light",
+        "fineAmount": 0.0148
+    },
+    {
+        "law": "Bicycle Lane Violation",
+        "fineAmount": 0.0062
+    },
+    {
+        "law": "Driving Without Insurance",
+        "fineAmount": 0.0051
+    },
+    {
+        "law": "Illegal U-Turn",
+        "fineAmount": 0.0175
+    },
+    {
+        "law": "No Seatbelt",
+        "fineAmount": 0.0139
+    },
+    {
+        "law": "Unsecured Load",
+        "fineAmount": 0.0276
+    },
+    {
+        "law": "Tailgating",
+        "fineAmount": 0.0298
+    },
+    {
+        "law": "Jaywalking",
+        "fineAmount": 0.0045
+    },
+    {
+        "law": "Expired Registration",
+        "fineAmount": 0.0296
+    },
+    {
+        "law": "Driving Without Insurance",
+        "fineAmount": 0.019
+    },
+    {
+        "law": "Unsecured Load",
+        "fineAmount": 0.011
+    },
+    {
+        "law": "Broken Tail Light",
+        "fineAmount": 0.0092
+    },
+    {
+        "law": "Jaywalking",
+        "fineAmount": 0.0255
+    },
+    {
+        "law": "Bicycle Lane Violation",
+        "fineAmount": 0.0224
+    },
+    {
+        "law": "Tailgating",
+        "fineAmount": 0.013
+    },
+    {
+        "law": "Not Yielding Right of Way",
+        "fineAmount": 0.0188
+    },
+    {
+        "law": "Improper Use of Horn",
+        "fineAmount": 0.0085
+    },
+    {
+        "law": "Driving Without Insurance",
+        "fineAmount": 0.0095
+    },
+    {
+        "law": "Parking Violation",
+        "fineAmount": 0.0119
+    },
+    {
+        "law": "Driving Without Lights",
+        "fineAmount": 0.012
+    },
+    {
+        "law": "Failure to Stop at Stop Sign",
+        "fineAmount": 0.0155
+    },
+    {
+        "law": "Bicycle Lane Violation",
+        "fineAmount": 0.0126
+    },
+    {
+        "law": "Tailgating",
+        "fineAmount": 0.0121
+    },
+    {
+        "law": "Broken Tail Light",
+        "fineAmount": 0.0093
+    },
+    {
+        "law": "Expired Registration",
+        "fineAmount": 0.0173
+    },
+    {
+        "law": "Improper Use of Horn",
+        "fineAmount": 0.026
+    }
+]

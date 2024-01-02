@@ -1,0 +1,14 @@
+{
+    "folders": [
+        {
+            "path": ".."
+        },
+        {
+            "path": "../../vincoder-blockchain"
+        },
+        {
+            "path": "../../nft-vincode-backend"
+        }
+    ],
+    "settings": {}
+}
