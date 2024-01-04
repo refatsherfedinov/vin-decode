@@ -1,5 +1,6 @@
 import 'dotenv/config';
 require('@nomiclabs/hardhat-waffle');
+require('@nomiclabs/hardhat-ethers');
 module.exports = {
     networks: {
         sepolia: {

@@ -10,32 +10,17 @@ contract VinDecode {
     using CarTypes for CarTypes.Theft;
     using CarTypes for CarTypes.Car;
 
-    event AccidentAdded(string vin, string description, string[] images);
-    event CarAdded(
-        string vin,
-        string brand,
-        string model,
-        uint year,
-        string fuelType,
-        string transmissionType,
-        string color,
-        string configuration,
-        string country,
-        address owner
-    );
-    event CarReportedFound(string vin, string location);
-    event CarReportedStolen(string vin, string location);
+    event AccidentAdded(string vin, CarTypes.Car car);
+    event CarAdded(string vin, CarTypes.Car car);
+    event CarReportedFound(string vin, CarTypes.Car car);
+    event CarReportedStolen(string vin, CarTypes.Car car);
     event DealerAdded(address dealer);
-    event FinesAdded(string vin, string[] description, uint[] amount);
-    event FinePaid(string vin, uint index);
+    event FinesAdded(string vin, CarTypes.Car car);
+    event FinePaid(string vin, CarTypes.Car car);
     event InsuranceCompanyAdded(address insuranceCompany);
-    event NewOwnerAdded(string vin, address newOwner);
-    event PlateChanged(string vin, string newPlateNumber);
-    event ServiceHistoryUpdated(
-        string vin,
-        uint mileage,
-        string[] serviceWorks
-    );
+    event NewOwnerAdded(string vin, CarTypes.Car car);
+    event PlateChanged(string vin, CarTypes.Car car);
+    event ServiceHistoryUpdated(string vin, CarTypes.Car car);
     event TrafficPoliceAdded(address trafficPolice);
     event ReportPurchased(string vin, CarTypes.Car car);
 
@@ -128,7 +113,7 @@ contract VinDecode {
             "New owner must be different from the old one"
         );
         cars[vin].owners.push(newOwner);
-        emit NewOwnerAdded(vin, newOwner);
+        emit NewOwnerAdded(vin, cars[vin]);
     }
 
     function changePlate(
@@ -152,7 +137,7 @@ contract VinDecode {
             );
         }
         cars[vin].plateNumbers.push(newPlateNumber);
-        emit PlateChanged(vin, newPlateNumber);
+        emit PlateChanged(vin, cars[vin]);
     }
 
     function isCarStolen(
@@ -179,9 +164,9 @@ contract VinDecode {
         );
 
         if (isStolen) {
-            emit CarReportedStolen(vin, location);
+            emit CarReportedStolen(vin, cars[vin]);
         } else {
-            emit CarReportedFound(vin, location);
+            emit CarReportedFound(vin, cars[vin]);
         }
     }
 
@@ -208,7 +193,7 @@ contract VinDecode {
             );
             cars[vin].fines.push(fineToAdd);
         }
-        emit FinesAdded(vin, descriptions, amounts);
+        emit FinesAdded(vin, cars[vin]);
     }
 
     function payFine(
@@ -227,7 +212,7 @@ contract VinDecode {
         (bool sent, ) = state.call{value: msg.value}("");
         require(sent, "Unable to send value, transaction failed");
         cars[vin].fines[fineIndex].paid = true;
-        emit FinePaid(vin, fineIndex);
+        emit FinePaid(vin, cars[vin]);
     }
 
     function markAsPaid(
@@ -240,7 +225,7 @@ contract VinDecode {
         );
         require(!cars[vin].fines[fineIndex].paid, "Fine has already been paid");
         cars[vin].fines[fineIndex].paid = true;
-        emit FinePaid(vin, fineIndex);
+        emit FinePaid(vin, cars[vin]);
     }
 
     function addServiceHistory(
@@ -259,7 +244,7 @@ contract VinDecode {
             serviceWorks
         );
         cars[vin].serviceHistory.push(serviceWorkToAdd);
-        emit ServiceHistoryUpdated(vin, mileage, serviceWorks);
+        emit ServiceHistoryUpdated(vin, cars[vin]);
     }
 
     function addAccident(
@@ -275,7 +260,7 @@ contract VinDecode {
             images
         );
         cars[vin].accidents.push(accidentToAdd);
-        emit AccidentAdded(vin, description, images);
+        emit AccidentAdded(vin, cars[vin]);
     }
 
     function isCarExists(string memory vin) public view returns (bool) {
@@ -351,17 +336,6 @@ contract VinDecode {
         car.country = country;
         car.owners.push(owner);
 
-        emit CarAdded(
-            vin,
-            brand,
-            model,
-            year,
-            fuelType,
-            transmissionType,
-            color,
-            configuration,
-            country,
-            owner
-        );
+        emit CarAdded(vin, cars[vin]);
     }
 }

@@ -69,7 +69,6 @@ const TrafficPolicePage = () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [cursor, setCursor] = useState<number | null>(null);
     const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
-
     const [plateNumber, setPlateNumber] = useState<string | null>(null);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [selectedFines, setSelectedFines] = useState<
@@ -89,34 +88,35 @@ const TrafficPolicePage = () => {
         init();
     }, [userAddress]);
 
+    useEffect(() => {
+        if (!userAddress) {
+            setErrorMessage('Please connect your wallet');
+        }
+
+        if (!isAuthorized) {
+            setErrorMessage('You are not authorized to access this page');
+        }
+        setIsErrorDialogOpen(!isAuthorized || !userAddress);
+    }, [userAddress, isAuthorized]);
+
     const validateOwnerAddress = (value: string) => {
         const ownerAddressRegex =
             /^0x[a-fA-F0-9]{40}$/; /* Regex for Ethereum addresses */
         return ownerAddressRegex.test(value) || value === '';
     };
 
-    function isValidPlateNumber(plateNumber: string) {
-        const regex =
-            /^[\u0041-\u005A\u0061-\u007A\u0410-\u044F\u0391-\u03C9\d]{2,} ?[\u0041-\u005A\u0061-\u007A\u0410-\u044F\u0391-\u03C9\d]{2,} ?[\u0041-\u005A\u0061-\u007A\u0410-\u044F\u0391-\u03C9\d]{2,}$/;
-        return regex.test(plateNumber);
-    }
-
     const handleOwnerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsOwnerValid(validateOwnerAddress(event.target.value));
         setNewOwnerAddress(event.target.value);
     };
 
-    const validateVin = (value: string) => {
-        const vinCodeRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
-        return vinCodeRegex.test(value) || value === '';
-    };
-
-    const handleVinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const cursorPosition = e.target.selectionStart;
-        setCursor(cursorPosition);
-        const value = e.target.value.toUpperCase();
-        setVinCode(value);
-        setIsVinValid(validateVin(value));
+    const eventHandler = (eventName: string) => {
+        contract?.on(eventName, (vin, car) => {
+            if (vin === vinCode) {
+                setCarData(car);
+                contract?.removeAllListeners(eventName);
+            }
+        });
     };
 
     useEffect(() => {
@@ -135,23 +135,11 @@ const TrafficPolicePage = () => {
 
             setTxHash(tx.hash);
             setLoading(true);
+            const theftStatus = !carStolen;
+            eventHandler(
+                theftStatus ? 'CarReportedStolen' : 'CarReportedFound'
+            );
             await tx.wait();
-            setCarData((prev) => {
-                if (prev) {
-                    return {
-                        ...prev,
-                        theftHistory: [
-                            ...prev.theftHistory,
-                            {
-                                date: Date.now() / 1000,
-                                isStolen: true,
-                                location: parkingLocation,
-                            },
-                        ],
-                    };
-                }
-                return prev;
-            });
             setCarStolen(!carStolen);
             setParkingLocation('');
             setLoading(false);
@@ -195,16 +183,8 @@ const TrafficPolicePage = () => {
                 const tx = await contract?.changePlate(vinCode, plateNumber);
                 setTxHash(tx.hash);
                 setLoading(true);
+                eventHandler('PlateChanged');
                 await tx.wait();
-                setCarData((prev) => {
-                    if (prev) {
-                        return {
-                            ...prev,
-                            plateNumbers: [plateNumber],
-                        };
-                    }
-                    return prev;
-                });
                 setPlateNumber('');
                 setLoading(false);
             }
@@ -225,17 +205,9 @@ const TrafficPolicePage = () => {
                 );
                 setTxHash(tx.hash);
                 setLoading(true);
+                eventHandler('NewOwnerAdded');
                 await tx.wait();
                 setLoading(false);
-                setCarData((prev) => {
-                    if (prev) {
-                        return {
-                            ...prev,
-                            owners: [...prev.owners, newOwnerAddress],
-                        };
-                    }
-                    return prev;
-                });
                 setNewOwnerAddress('');
             }
         } catch (error: any) {
@@ -258,24 +230,8 @@ const TrafficPolicePage = () => {
                 );
                 setTxHash(tx.hash);
                 setLoading(true);
+                eventHandler('FinesAdded');
                 await tx.wait();
-                setCarData((prev) => {
-                    if (prev) {
-                        return {
-                            ...prev,
-                            fines: [
-                                ...prev.fines,
-                                ...selectedFines.map((fine) => ({
-                                    date: Date.now() / 1000,
-                                    description: fine.law,
-                                    amount: fine.fineAmount,
-                                    paid: false,
-                                })),
-                            ],
-                        };
-                    }
-                    return prev;
-                });
                 setLoading(false);
                 setSelectedFines([]);
             }
@@ -291,24 +247,8 @@ const TrafficPolicePage = () => {
             const tx = await contract?.markAsPaid(vinCode, index);
             setTxHash(tx.hash);
             setLoading(true);
+            eventHandler('FinePaid');
             await tx.wait();
-            setCarData((prev) => {
-                if (prev) {
-                    return {
-                        ...prev,
-                        fines: prev.fines.map((fine, i) => {
-                            if (i === index) {
-                                return {
-                                    ...fine,
-                                    paid: true,
-                                };
-                            }
-                            return fine;
-                        }),
-                    };
-                }
-                return prev;
-            });
             setLoading(false);
         } catch (error: any) {
             setLoading(false);

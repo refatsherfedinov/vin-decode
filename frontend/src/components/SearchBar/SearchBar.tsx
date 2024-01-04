@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaSearch } from 'react-icons/fa';
 import styles from './SearchBar.module.css';
 import { Button, TextField } from '@mui/material';
 

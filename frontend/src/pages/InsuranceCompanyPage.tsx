@@ -2,7 +2,6 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Header from '../components/Header/Header';
 import styles from './InsuranceCompanyPage.module.css';
 import {
-    Box,
     Button,
     Card,
     Divider,
@@ -49,18 +48,6 @@ type Car = {
     accidents: Accident[];
 };
 
-const carInfoKeys: (keyof Car)[] = [
-    'brand',
-    'model',
-    'year',
-    'fuelType',
-    'transmissionType',
-    'color',
-    'configuration',
-    'country',
-    'mileage',
-];
-
 const InsuranceCompanyPage = () => {
     interface ImageFile {
         file: File;
@@ -75,13 +62,10 @@ const InsuranceCompanyPage = () => {
     const [cursor, setCursor] = useState<number | null>(null);
     const [files, setFiles] = useState<ImageFile[]>([]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [accidents, setAccidents] = useState<string[]>([]);
-    const [accidentsImages, setAccidentsImages] = useState<string[][]>([[]]);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [isErrorDialogOpen, setIsErrorDialogOpen] = useState<boolean>(false);
     const [carData, setCarData] = useState<Car | null>(null);
     const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
-    const [pinataUrls, setPinataUrls] = useState<string[]>([]);
     const contract = useSmartContract();
     const userAddress = useUserAddress();
     const checkIsAddressAllowed = useAllowedUserAddress();
@@ -93,6 +77,17 @@ const InsuranceCompanyPage = () => {
 
         init();
     }, [userAddress]);
+
+    useEffect(() => {
+        if (!userAddress) {
+            setErrorMessage('Please connect your wallet');
+        }
+
+        if (!isAuthorized) {
+            setErrorMessage('You are not authorized to access this page');
+        }
+        setIsErrorDialogOpen(!isAuthorized || !userAddress);
+    }, [userAddress, isAuthorized]);
 
     const handleDrop = useCallback((acceptedFiles: File[]) => {
         const uploadedImages = acceptedFiles.map((file) => ({
@@ -106,6 +101,15 @@ const InsuranceCompanyPage = () => {
         setFiles((prevImages) => prevImages.filter((_, i) => i !== index));
     };
 
+    const eventHandler = (eventName: string) => {
+        contract?.on(eventName, (vin, car) => {
+            if (vin === vinCode) {
+                setCarData(car);
+                contract?.removeAllListeners(eventName);
+            }
+        });
+    };
+
     const uploadImagesToIPFS = async () => {
         try {
             const formData = new FormData();
@@ -114,15 +118,16 @@ const InsuranceCompanyPage = () => {
                 formData.append('images', file.file);
             });
 
-            const response = await fetch('http://localhost:8080/upload', {
-                method: 'POST',
-                body: formData,
-            });
+            const response = await fetch(
+                'https://vin-decode-alchemy-21389b05723f.herokuapp.com/upload',
+                {
+                    method: 'POST',
+                    body: formData,
+                }
+            );
 
             const data = await response.json();
             if (data.success) {
-                console.log('IPFS URLs:', data.pinataUrls);
-                setPinataUrls(data.pinataUrls);
                 return data.pinataUrls;
             }
         } catch (error: any) {
@@ -136,7 +141,6 @@ const InsuranceCompanyPage = () => {
     ) => {
         try {
             const pinataRes = files.length ? await uploadImagesToIPFS() : [];
-            console.log('IPFS files:', pinataRes);
             const tx = await contract?.addAccident(
                 vinCode,
                 description,
@@ -145,32 +149,10 @@ const InsuranceCompanyPage = () => {
 
             setTxHash(tx.hash);
             setLoading(true);
+            eventHandler('AccidentAdded');
             await tx.wait();
-
-            setCarData((prevCarData) => {
-                if (prevCarData) {
-                    return {
-                        ...prevCarData,
-                        accidents: [
-                            ...prevCarData.accidents,
-                            {
-                                date: Date.now() / 1000,
-                                description: description,
-                                images: pinataRes,
-                            },
-                        ],
-                    };
-                }
-                return null;
-            });
-            setAccidentsImages((prevAccidentsImages) => [
-                ...prevAccidentsImages,
-                pinataRes,
-            ]);
-            setAccidents((prevAccidents) => [...prevAccidents, description]);
             setLoading(false);
             setFiles([]);
-            setPinataUrls([]);
             setDescription('');
         } catch (error: any) {
             setLoading(false);
@@ -191,20 +173,8 @@ const InsuranceCompanyPage = () => {
     ) => {
         try {
             const carInfo = await contract?.getCarInfo(vinCode);
-            console.log(carInfo);
             if (carInfo.brand) {
                 setCarData(carInfo);
-                console.log(carInfo);
-                setAccidents(
-                    carInfo.accidents.map(
-                        (accident: Accident) => accident.description
-                    )
-                );
-                setAccidentsImages(
-                    carInfo.accidents.map(
-                        (accident: Accident) => accident.images
-                    )
-                );
             }
         } catch (error: any) {
             setErrorMessage(JSON.stringify(error.reason));
@@ -382,10 +352,10 @@ const InsuranceCompanyPage = () => {
                             <div className={styles.accidentsHistory}>
                                 <h3>Accidents History</h3>
                                 <Divider />
-                                {accidents.length > 0 ? (
+                                {carData.accidents.length > 0 ? (
                                     <List sx={{ padding: 0, maxWidth: 600 }}>
-                                        {accidents.map(
-                                            (accidentInfo, index) => (
+                                        {carData.accidents.map(
+                                            (accident, index) => (
                                                 <Card
                                                     key={index}
                                                     className={styles.service}
@@ -403,71 +373,65 @@ const InsuranceCompanyPage = () => {
                                                                     .accidents[
                                                                     index
                                                                 ].date
-                                                            )}: ${accidentInfo}`}
+                                                            )}: ${
+                                                                accident.description
+                                                            }`}
                                                         />
                                                     </ListItem>
 
                                                     <ListItem>
-                                                        {accidentsImages[
-                                                            index
-                                                        ] &&
-                                                            accidentsImages[
-                                                                index
-                                                            ].length > 0 && (
-                                                                <ImageList
-                                                                    sx={{
-                                                                        width: 600,
-                                                                        maxHeight: 250,
-                                                                        position:
-                                                                            'relative',
-                                                                        overflow:
-                                                                            'auto',
-                                                                        '& ul': {
-                                                                            padding: 0,
-                                                                        },
-                                                                    }}
-                                                                    cols={5}
-                                                                    rowHeight={
-                                                                        100
-                                                                    }
-                                                                >
-                                                                    {accidentsImages[
-                                                                        index
-                                                                    ].map(
-                                                                        (
-                                                                            accidentImg,
-                                                                            imgIndex
-                                                                        ) => (
-                                                                            <ImageListItem
-                                                                                key={`${index}-${imgIndex}`}
-                                                                            >
-                                                                                <img
-                                                                                    src={
+                                                        {accident.images
+                                                            .length > 0 && (
+                                                            <ImageList
+                                                                sx={{
+                                                                    width: 600,
+                                                                    maxHeight: 250,
+                                                                    position:
+                                                                        'relative',
+                                                                    overflow:
+                                                                        'auto',
+                                                                    '& ul': {
+                                                                        padding: 0,
+                                                                    },
+                                                                }}
+                                                                cols={5}
+                                                                rowHeight={100}
+                                                            >
+                                                                {accident.images.map(
+                                                                    (
+                                                                        accidentImg: string,
+                                                                        imgIndex: number
+                                                                    ) => (
+                                                                        <ImageListItem
+                                                                            key={`${index}-${imgIndex}`}
+                                                                        >
+                                                                            <img
+                                                                                src={
+                                                                                    accidentImg
+                                                                                }
+                                                                                style={{
+                                                                                    backgroundColor:
+                                                                                        'white',
+                                                                                    width: 100,
+                                                                                    height: 100,
+                                                                                    cursor: 'pointer',
+                                                                                    borderRadius: 10,
+                                                                                }}
+                                                                                alt={`Preview ${
+                                                                                    index +
+                                                                                    1
+                                                                                }`}
+                                                                                onClick={() =>
+                                                                                    setSelectedImage(
                                                                                         accidentImg
-                                                                                    }
-                                                                                    style={{
-                                                                                        backgroundColor:
-                                                                                            'white',
-                                                                                        width: 100,
-                                                                                        height: 100,
-                                                                                        cursor: 'pointer',
-                                                                                        borderRadius: 10,
-                                                                                    }}
-                                                                                    alt={`Preview ${
-                                                                                        index +
-                                                                                        1
-                                                                                    }`}
-                                                                                    onClick={() =>
-                                                                                        setSelectedImage(
-                                                                                            accidentImg
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </ImageListItem>
-                                                                        )
-                                                                    )}
-                                                                </ImageList>
-                                                            )}
+                                                                                    )
+                                                                                }
+                                                                            />
+                                                                        </ImageListItem>
+                                                                    )
+                                                                )}
+                                                            </ImageList>
+                                                        )}
                                                     </ListItem>
                                                 </Card>
                                             )

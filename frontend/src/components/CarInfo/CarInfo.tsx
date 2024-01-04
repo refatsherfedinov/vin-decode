@@ -1,14 +1,5 @@
 import React from 'react';
-import styles from './CarInfo.module.css';
-import {
-    Card,
-    Grid,
-    List,
-    ListItem,
-    ListItemText,
-    Paper,
-    Typography,
-} from '@mui/material';
+import { Card, Grid, List, ListItem, ListItemText } from '@mui/material';
 
 export type Car = {
     brand: string;

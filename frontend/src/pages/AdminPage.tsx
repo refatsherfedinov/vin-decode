@@ -9,9 +9,7 @@ import { Switch } from '@mui/material';
 import TransactionProcessingDialog from '../components/TransactionProcessingDialog/TransactionProcessingDialog';
 import ErrorMessageDialog from '../components/ErrorMessageDialog/ErrorMessageDialog';
 import styles from './AdminPage.module.css';
-import { ethers, utils } from 'ethers';
-import { set } from 'date-fns';
-import { wait } from '@testing-library/user-event/dist/utils';
+import { ethers } from 'ethers';
 
 const AdminPage = () => {
     const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
@@ -97,7 +95,7 @@ const AdminPage = () => {
                 {!userAddress && <p>Connect wallet to get started</p>}
                 {isAuthorized ? (
                     <div>
-                        <h2>Balance: {balance?.toString()}</h2>
+                        <h2>Government budget: {balance?.toString()} SepETH</h2>
                         <p>
                             {' '}
                             You have admin rights to use every page in this App

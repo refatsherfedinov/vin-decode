@@ -3,7 +3,6 @@ import Header from '../components/Header/Header';
 import styles from './HomePage.module.css';
 import { useSmartContract } from '../components/ContractContext/ContractContext';
 import { useState } from 'react';
-import { set } from 'date-fns';
 import {
     Button,
     Card,

@@ -1,10 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styles from './Menu.module.css';
-import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import GarageIcon from '@mui/icons-material/Garage';
-import CarCrashIcon from '@mui/icons-material/CarCrash';
 
 const Menu: React.FC = () => {
     return (

@@ -9,7 +9,6 @@ import serviceList from '../service-list.json';
 import configurationsList from '../car-configurations.json';
 import emojiFlags from 'emoji-flags';
 import {
-    Box,
     Button,
     Card,
     Chip,
@@ -29,8 +28,7 @@ import {
     useUserAddress,
 } from '../components/ContractContext/ContractContext';
 import SearchBar from '../components/SearchBar/SearchBar';
-import { format } from 'date-fns';
-import CarInfo, { Car } from '../components/CarInfo/CarInfo';
+import CarInfo from '../components/CarInfo/CarInfo';
 import convertTimestamp from '../utils/convertTimestamp';
 
 type Color = {
@@ -86,7 +84,7 @@ const DealerPage = () => {
     const [countryOfOrigin, setCountryOfOrigin] = useState<CountryData | null>(
         null
     );
-    const [carInfo, setCarInfo] = useState<Car | null>(null);
+    const [carData, setCarData] = useState<any>(null);
 
     const contract = useSmartContract();
     const userAddress = useUserAddress();
@@ -201,6 +199,15 @@ const DealerPage = () => {
         setMileage(newValue);
     };
 
+    const eventHandler = (eventName: string) => {
+        contract?.on(eventName, (vin, car) => {
+            if (vin === vinCode) {
+                setCarData(car);
+                contract?.removeAllListeners(eventName);
+            }
+        });
+    };
+
     const addService = async () => {
         try {
             const tx = await contract?.addServiceHistory(
@@ -210,17 +217,9 @@ const DealerPage = () => {
             );
             setLoading(true);
             setTxHash(tx.hash);
+            eventHandler('ServiceHistoryUpdated');
             await tx.wait();
             setLoading(false);
-
-            setServiceHistory((prev) => [
-                ...prev,
-                {
-                    date: Date.now() / 1000,
-                    mileage: mileage,
-                    works: selectedServices,
-                },
-            ]);
             setSelectedServises([]);
             setMileage(0);
         } catch (error: any) {
@@ -244,8 +243,7 @@ const DealerPage = () => {
 
                 console.log(carInfo);
                 if (carInfo.brand) {
-                    setCarInfo(carInfo);
-
+                    setCarData(carInfo);
                     setCarExists(true);
                     setSelectedBrand(carInfo.brand);
                     setSelectedModel(carInfo.model);
@@ -267,8 +265,7 @@ const DealerPage = () => {
                     setServiceHistory(carInfo.serviceHistory);
                 }
             } catch (error: any) {
-                setCarInfo(null);
-
+                setCarData(null);
                 setCarExists(false);
                 setCarExists(false);
                 setServiceHistory([]);
@@ -307,7 +304,9 @@ const DealerPage = () => {
             );
             setLoading(true);
             setTxHash(tx.hash);
+            eventHandler('CarAdded');
             await tx.wait();
+            setCarExists(true);
             setLoading(false);
         } catch (error: any) {
             console.error('Error:', error);
@@ -329,11 +328,11 @@ const DealerPage = () => {
                     handleSearch={handleSearchButton}
                 />
 
-                {carInfo && (
+                {carData && (
                     <div className={styles.dashboard}>
                         <div>
                             <h2>Car Info</h2>
-                            <CarInfo carData={carInfo} />
+                            <CarInfo carData={carData} />
                         </div>
                         <div className={styles.services}>
                             <h2>Service</h2>
@@ -380,44 +379,52 @@ const DealerPage = () => {
                             <Divider />
                             {serviceHistory.length > 0 ? (
                                 <List className={styles.serviceHistory}>
-                                    {serviceHistory.map((service) => (
-                                        <Card
-                                            key={service.date}
-                                            className={styles.service}
-                                        >
-                                            <div className={styles.serviceDate}>
-                                                {convertTimestamp(service.date)}
-                                            </div>
-                                            <div
-                                                className={
-                                                    styles.serviceMileage
-                                                }
+                                    {carData.serviceHistory.map(
+                                        (service: any) => (
+                                            <Card
+                                                key={service.date}
+                                                className={styles.service}
                                             >
-                                                <Typography
-                                                    variant='subtitle2'
-                                                    color='text.secondary'
+                                                <div
+                                                    className={
+                                                        styles.serviceDate
+                                                    }
                                                 >
-                                                    {service.mileage.toString()}{' '}
-                                                    miles
-                                                </Typography>
-                                            </div>
-                                            <div
-                                                className={
-                                                    styles.serviceWorksList
-                                                }
-                                            >
-                                                <List sx={{ padding: 0 }}>
-                                                    {service.works.map(
-                                                        (work) => (
-                                                            <Chip
-                                                                label={work}
-                                                            />
-                                                        )
+                                                    {convertTimestamp(
+                                                        service.date
                                                     )}
-                                                </List>
-                                            </div>
-                                        </Card>
-                                    ))}
+                                                </div>
+                                                <div
+                                                    className={
+                                                        styles.serviceMileage
+                                                    }
+                                                >
+                                                    <Typography
+                                                        variant='subtitle2'
+                                                        color='text.secondary'
+                                                    >
+                                                        {service.mileage.toString()}{' '}
+                                                        miles
+                                                    </Typography>
+                                                </div>
+                                                <div
+                                                    className={
+                                                        styles.serviceWorksList
+                                                    }
+                                                >
+                                                    <List sx={{ padding: 0 }}>
+                                                        {service.works.map(
+                                                            (work: string) => (
+                                                                <Chip
+                                                                    label={work}
+                                                                />
+                                                            )
+                                                        )}
+                                                    </List>
+                                                </div>
+                                            </Card>
+                                        )
+                                    )}
                                 </List>
                             ) : (
                                 <ListItem divider>

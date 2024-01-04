@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Contract, ethers } from 'ethers';
 import vinDecode from '../../abis/VinDecode.json';
 
-// Define the type for the context value
 interface ContractContextType {
     contract: Contract | null;
     isLoading: boolean;
