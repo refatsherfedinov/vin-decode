@@ -28,7 +28,6 @@ app.post('/upload', upload.array('images'), async (req, res) => {
             const result = await pinata.pinFromFS(file.path);
             pinataResponses.push(`https://ipfs.io/ipfs/${result.IpfsHash}`);
         }
-        console.log(pinataResponses);
         res.json({ success: true, pinataUrls: pinataResponses });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

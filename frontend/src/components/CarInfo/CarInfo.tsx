@@ -26,7 +26,7 @@ const carInfoKeys: Partial<Record<keyof Car, string>> = {
     year: 'Year',
     mileage: 'Mileage',
     plateNumbers: 'Plate Number',
-    owners: 'Owner',
+    owners: 'Owners',
 };
 
 type CarInfoProps = {

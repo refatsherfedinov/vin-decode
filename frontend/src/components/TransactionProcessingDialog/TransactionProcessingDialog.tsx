@@ -15,8 +15,8 @@ const TransactionProcessingDialog: React.FC<
                 <CircularProgress />
                 {txHash && (
                     <p>
-                        transaction submitted waiting for confirmation. Detailes
-                        of thansaction on{' '}
+                        transaction submitted waiting for confirmation. Check
+                        the detailes of transaction here:{' '}
                         <a
                             href={`https://sepolia.etherscan.io/tx/${txHash}`}
                             target='_blank'

@@ -6,4 +6,7 @@
 
 .description {
     width: 500px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
 }

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Header from '../components/Header/Header';
 import useAllowedUserAddress from '../utils/checkIsAddressAllowed';
 import {
     useSmartContract,
@@ -59,7 +58,6 @@ const AdminPage = () => {
                 const balanceEther = ethers.utils.formatEther(
                     balanceWei.toString()
                 );
-                console.log(balanceEther.toString());
                 setBalance(balanceEther);
             } catch (error: any) {
                 setErrorMessage(JSON.stringify(error.reason));
@@ -76,7 +74,6 @@ const AdminPage = () => {
 
     return (
         <div>
-            <Header />
             <div className={styles.container}>
                 <h1>Admin Dashboard</h1>
                 <div className={styles.contols}>

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Header from '../components/Header/Header';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import cars from '../car-list.json';
@@ -56,7 +55,6 @@ const DealerPage = () => {
     const [ownerAddress, setOwnerAddress] = useState<string>('');
     const [isValid, setIsValid] = useState<boolean>(true);
     const [carExists, setCarExists] = useState<boolean>(false);
-    const [isVinValid, setIsVinValid] = useState<boolean>(false);
     const [mileage, setMileage] = useState<number>(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const [cursor, setCursor] = useState<number | null>(null);
@@ -93,7 +91,6 @@ const DealerPage = () => {
     useEffect(() => {
         const init = async () => {
             const result = await checkIsAddressAllowed(contract, userAddress);
-            console.log(result);
             setIsAuthorized(result);
         };
 
@@ -176,15 +173,6 @@ const DealerPage = () => {
         const vinCodeRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
         return vinCodeRegex.test(value) || value === '';
     };
-    const handleVinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const cursorPosition = e.target.selectionStart;
-        setCursor(cursorPosition);
-
-        const value = e.target.value.toUpperCase();
-        setVinCode(value);
-        setIsVinValid(validateVin(value));
-        setCarExists(false);
-    };
 
     useEffect(() => {
         if (inputRef.current && cursor !== null) {
@@ -240,8 +228,6 @@ const DealerPage = () => {
         const getCarInfo = async () => {
             try {
                 const carInfo = await contract?.getCarInfo(vinCode);
-
-                console.log(carInfo);
                 if (carInfo.brand) {
                     setCarData(carInfo);
                     setCarExists(true);
@@ -261,7 +247,6 @@ const DealerPage = () => {
                     );
                     setOwnerAddress(carInfo.owners[carInfo.owners.length - 1]);
                     setMileage(carInfo.mileage);
-
                     setServiceHistory(carInfo.serviceHistory);
                 }
             } catch (error: any) {
@@ -282,7 +267,6 @@ const DealerPage = () => {
                 setSelectedServises([]);
                 setErrorMessage(JSON.stringify(error.reason));
                 setIsErrorDialogOpen(true);
-                console.error('Error:', error);
             }
         };
         getCarInfo();
@@ -316,10 +300,18 @@ const DealerPage = () => {
         }
     };
 
+    if (!userAddress) {
+        return <div>Loading or not connected...</div>;
+    }
+
+    if (!isAuthorized) {
+        return (
+            <div>You are not authorized to access this page {userAddress}.</div>
+        );
+    }
+
     return (
         <div>
-            <Header />
-
             <div className={styles.container}>
                 <h1>Dealer's dashboard</h1>
                 <SearchBar
@@ -654,7 +646,6 @@ const DealerPage = () => {
                                     !color ||
                                     !countryOfOrigin ||
                                     !ownerAddress ||
-                                    // !isVinValid ||
                                     !isValid ||
                                     !vinCode ||
                                     carExists

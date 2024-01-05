@@ -5,11 +5,13 @@ import DealerPage from './pages/DealerPage';
 import AdminPage from './pages/AdminPage';
 import InsuranceCompanyPage from './pages/InsuranceCompanyPage';
 import { SmartContractProvider } from './components/ContractContext/ContractContext';
+import Header from './components/Header/Header';
 function App() {
     return (
         <div>
             <SmartContractProvider>
                 <Router>
+                    <Header />
                     <Routes>
                         <Route path='/' element={<HomePage />} />
                         <Route path='/admin' element={<AdminPage />} />

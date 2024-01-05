@@ -3,13 +3,11 @@
 }
 
 .containerTop {
-    max-width: 600px;
-    margin: auto;
-}
-
-.carInfo {
+    width: 100%;
     display: flex;
     flex-direction: column;
+    margin: auto;
+    align-items: center;
 }
 
 .dashboard {
@@ -26,12 +24,7 @@
     align-items: left;
     justify-content: space-between;
 }
-.accidentBoard {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: center;
-}
+
 .accidentsHistory {
     display: flex;
     flex-direction: column;

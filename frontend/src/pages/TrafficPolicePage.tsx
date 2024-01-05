@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Header from '../components/Header/Header';
 import {
     Autocomplete,
     Button,
@@ -60,7 +59,6 @@ const TrafficPolicePage = () => {
     const [carStolen, setCarStolen] = useState<boolean>(false);
     const [vinCode, setVinCode] = useState<string | null>(null);
     const [isOwnerValid, setIsOwnerValid] = useState(true);
-    const [isVinValid, setIsVinValid] = useState(true);
     const [newOwnerAddress, setNewOwnerAddress] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [txHash, setTxHash] = useState<string | null>('');
@@ -147,7 +145,6 @@ const TrafficPolicePage = () => {
             setLoading(false);
             setErrorMessage(JSON.stringify(error.reason));
             setIsErrorDialogOpen(true);
-            console.error('Error:', error);
         }
     };
 
@@ -160,7 +157,6 @@ const TrafficPolicePage = () => {
     const handleSearchButton = async () => {
         try {
             const carInfo = await contract?.getCarInfo(vinCode);
-            console.log(carInfo);
             if (carInfo.brand) {
                 setCarData(carInfo);
                 setCarStolen(
@@ -173,7 +169,6 @@ const TrafficPolicePage = () => {
         } catch (error: any) {
             setErrorMessage(JSON.stringify(error.reason));
             setIsErrorDialogOpen(true);
-            console.error('Error:', error);
         }
     };
 
@@ -270,8 +265,6 @@ const TrafficPolicePage = () => {
 
     return (
         <div>
-            <Header />
-
             <div className={styles.container}>
                 <h1>Traffic Police Management</h1>
                 <SearchBar
@@ -299,7 +292,6 @@ const TrafficPolicePage = () => {
                                                 borderBottomRightRadius: 0,
                                             },
                                         }}
-                                        // sx={{ width: 200 }}
                                         disabled={carStolen}
                                         value={plateNumber}
                                         onChange={(e) => {
@@ -338,6 +330,7 @@ const TrafficPolicePage = () => {
                                     }}
                                     sx={{ width: 400 }}
                                     error={!isOwnerValid}
+                                    disabled={carStolen}
                                 />
                                 <Button
                                     variant='contained'
@@ -348,7 +341,11 @@ const TrafficPolicePage = () => {
                                         borderTopRightRadius: 0,
                                     }}
                                     onClick={handleAddNewOwner}
-                                    disabled={!isOwnerValid || !newOwnerAddress}
+                                    disabled={
+                                        !isOwnerValid ||
+                                        !newOwnerAddress ||
+                                        carStolen
+                                    }
                                 >
                                     {carStolen
                                         ? 'UNABLE WHILE CAR IS STOLEN'

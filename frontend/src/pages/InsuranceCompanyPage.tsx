@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import Header from '../components/Header/Header';
 import styles from './InsuranceCompanyPage.module.css';
 import {
     Button,
@@ -158,7 +157,6 @@ const InsuranceCompanyPage = () => {
             setLoading(false);
             setErrorMessage(JSON.stringify(error.reason));
             setIsErrorDialogOpen(true);
-            console.error('Error:', error);
         }
     };
 
@@ -235,8 +233,6 @@ const InsuranceCompanyPage = () => {
 
     return (
         <div>
-            <Header />
-
             <div className={styles.container}>
                 <div className={styles.containerTop}>
                     <h1>Add Accident Details</h1>

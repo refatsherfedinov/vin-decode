@@ -22,7 +22,6 @@ export const SmartContractProvider: React.FC<any> = ({ children }) => {
     useEffect(() => {
         const initContract = async () => {
             if (!window.ethereum) {
-                alert('Please install MetaMask!');
                 return;
             }
 

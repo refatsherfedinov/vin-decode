@@ -1,5 +1,4 @@
 import SearchBar from '../components/SearchBar/SearchBar';
-import Header from '../components/Header/Header';
 import styles from './HomePage.module.css';
 import { useSmartContract } from '../components/ContractContext/ContractContext';
 import { useState } from 'react';
@@ -66,7 +65,6 @@ const HomePage = () => {
             setLoading(false);
             setErrorMessage(JSON.stringify(error.reason));
             setIsErrorDialogOpen(true);
-            console.error('Error:', error);
         }
     };
 
@@ -81,8 +79,9 @@ const HomePage = () => {
                 setErrorMessage('Car does not exist in database');
                 setIsErrorDialogOpen(true);
             }
-        } catch (error) {
-            console.error('Error:', error);
+        } catch (error: any) {
+            setErrorMessage(JSON.stringify(error.reason));
+            setIsErrorDialogOpen(true);
         }
     };
 
@@ -98,7 +97,6 @@ const HomePage = () => {
             contract?.on('ReportPurchased', (vin, car) => {
                 if (vin === vinCode) {
                     setCarData(car);
-                    console.log(car);
                     contract?.removeAllListeners('ReportPurchased');
                 }
             });
@@ -109,21 +107,23 @@ const HomePage = () => {
             setLoading(false);
             setErrorMessage(JSON.stringify(error.reason));
             setIsErrorDialogOpen(true);
-            console.error('Error:', error);
         }
     };
 
     return (
         <div>
-            <Header />
             <div className={styles.container}>
+                <h1>Check car history by VIN code</h1>
                 <div className={styles.description}>
-                    <h1>Check car history by VIN code</h1>
                     <h3>
                         VinDecode has the most complete database of used cars.
                         We will show accidents, liens, repairs, mileage
                         adjustments, restrictions and much more.
                     </h3>
+                    <h4>
+                        Vin number must contain 17 symbols excluding I,O,Q
+                        letters
+                    </h4>
                     <SearchBar
                         vinCode={vinCode}
                         setVinCode={setVinCode}
@@ -131,7 +131,10 @@ const HomePage = () => {
                     />
                     {carExists && (
                         <div className={styles.tips}>
-                            <a>Car exists in database you can order report</a>
+                            <h4>
+                                The car is in the database, order the report for
+                                0.01 SepETH
+                            </h4>
                         </div>
                     )}
                     <div className={styles.showReport}>

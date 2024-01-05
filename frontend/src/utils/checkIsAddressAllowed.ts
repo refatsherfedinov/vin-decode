@@ -12,7 +12,6 @@ const useAllowedUserAddress = () => {
             return false;
         }
         try {
-            console.log(location.pathname);
             switch (location.pathname) {
                 case '/dealer':
                     return await contract?.isDealer(address);
