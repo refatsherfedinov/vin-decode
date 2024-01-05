@@ -73,6 +73,7 @@ const HomePage = () => {
             return;
         }
         try {
+            setCarData(null);
             const carExists = await contract?.isCarExists(vinCode);
             setCarExists(carExists);
             if (!carExists) {
@@ -97,6 +98,7 @@ const HomePage = () => {
             contract?.on('ReportPurchased', (vin, car) => {
                 if (vin === vinCode) {
                     setCarData(car);
+                    setCarExists(false);
                     contract?.removeAllListeners('ReportPurchased');
                 }
             });
@@ -129,23 +131,28 @@ const HomePage = () => {
                         setVinCode={setVinCode}
                         handleSearch={handleSearch}
                     />
+
                     {carExists && (
-                        <div className={styles.tips}>
-                            <h4>
-                                The car is in the database, order the report for
-                                0.01 SepETH
-                            </h4>
-                        </div>
+                        <>
+                            <div className={styles.tips}>
+                                <h4>
+                                    The car is in the database, order the report
+                                    for 0.01 SepETH
+                                </h4>
+                            </div>
+
+                            <div className={styles.showReport}>
+                                <Button
+                                    variant='contained'
+                                    onClick={handleBuyReport}
+                                    disabled={!carExists}
+                                >
+                                    Buy report
+                                </Button>
+                            </div>
+                        </>
                     )}
-                    <div className={styles.showReport}>
-                        <Button
-                            variant='contained'
-                            onClick={handleBuyReport}
-                            disabled={!carExists}
-                        >
-                            Buy report
-                        </Button>
-                    </div>
+
                     {carData && (
                         <div className={styles.carReport}>
                             <h2>Car report</h2>
