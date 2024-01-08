@@ -2,6 +2,10 @@
 **Description**
 This application utilizes blockchain technology to manage and track vehicle information, service history, police reports, and insurance claims. It is built on the Ethereum blockchain using Solidity and provides distinct functionalities for car dealers, traffic police departments, and insurance companies.
 
+**Live demo**
+
+https://vin-decode-alchemy-21389b05723f.herokuapp.com/
+
 **Getting Started**
 **Prerequisites**
 
