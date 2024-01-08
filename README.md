@@ -37,6 +37,8 @@ Fines Management: Add and manage traffic fines. Fines can be marked as paid by t
 Accident Reporting: Report accidents, add descriptions, and upload photos. Photos are uploaded to the IPFS network, and their hashes are stored on the blockchain.
 ### Full Report
 On the home page, enter a VIN number to check its existence for free. Full reports can be purchased for 0.01 Sepolia ETH.
+
+For example check this vin "AAAAAAAAAAAAAAAAA" (17 A's) to see all sections of report.
 ### Enjoy
 Explore the various functionalities of the app as a dealer, traffic police, or insurance company representative.
 
